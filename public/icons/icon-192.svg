@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="192" height="192" viewBox="0 0 192 192" role="img" aria-label="アイボウくん">
+  <rect width="192" height="192" rx="44" fill="#0F766E"/>
+  <circle cx="96" cy="82" r="42" fill="#FFFDF8"/>
+  <circle cx="80" cy="78" r="6" fill="#0F766E"/>
+  <circle cx="112" cy="78" r="6" fill="#0F766E"/>
+  <path d="M76 103c12 12 28 12 40 0" fill="none" stroke="#0F766E" stroke-width="8" stroke-linecap="round"/>
+  <path d="M48 142c18-22 78-22 96 0" fill="#14B8A6"/>
+</svg>

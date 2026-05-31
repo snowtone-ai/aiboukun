@@ -1,0 +1,492 @@
+generator client {
+  provider = "prisma-client"
+  output   = "./generated/client"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Organization {
+  id        String   @id @default(cuid())
+  name      String
+  plan      String   @default("starter")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  members OrganizationMember[]
+  brands  Brand[]
+  stores  Store[]
+}
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String    @unique
+  emailVerified DateTime?
+  image         String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  memberships OrganizationMember[]
+  accounts    Account[]
+  sessions    Session[]
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+model OrganizationMember {
+  id             String @id @default(cuid())
+  organizationId String
+  userId         String
+  role           Role
+
+  organization Organization @relation(fields: [organizationId], references: [id])
+  user         User         @relation(fields: [userId], references: [id])
+
+  @@unique([organizationId, userId])
+  @@unique([userId])
+}
+
+enum Role {
+  OWNER
+  ADMIN
+  MANAGER
+  STAFF
+  VIEWER
+}
+
+model Brand {
+  id             String @id @default(cuid())
+  organizationId String
+  name           String
+
+  organization Organization @relation(fields: [organizationId], references: [id])
+  areas        Area[]
+  stores       Store[]
+}
+
+model Area {
+  id      String @id @default(cuid())
+  brandId String
+  name    String
+
+  brand  Brand   @relation(fields: [brandId], references: [id])
+  stores Store[]
+}
+
+model Store {
+  id             String      @id @default(cuid())
+  organizationId String
+  brandId        String?
+  areaId         String?
+  name           String
+  industry       Industry
+  address        String?
+  phone          String?
+  status         StoreStatus @default(ACTIVE)
+  nextSyncAt     DateTime?
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+
+  organization Organization           @relation(fields: [organizationId], references: [id])
+  brand        Brand?                 @relation(fields: [brandId], references: [id])
+  area         Area?                  @relation(fields: [areaId], references: [id])
+  gbp          GoogleBusinessProfile?
+  reviews      Review[]
+  competitors  Competitor[]
+  tasks        Task[]
+}
+
+enum Industry {
+  RESTAURANT
+  BEAUTY_SALON
+  DENTAL
+  BEAUTY_CLINIC
+  BODY_CARE
+  HOTEL
+  RETAIL
+  OTHER
+}
+
+enum StoreStatus {
+  ACTIVE
+  PAUSED
+  DISCONNECTED
+}
+
+model GoogleConnection {
+  id              String    @id @default(cuid())
+  organizationId  String
+  userId          String
+  provider        String    @default("google")
+  accessTokenEnc  String
+  refreshTokenEnc String?
+  expiresAt       DateTime?
+  scopes          String[]
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  @@unique([organizationId, userId, provider])
+}
+
+model GoogleBusinessProfile {
+  id                 String  @id @default(cuid())
+  storeId            String  @unique
+  googleAccountName  String
+  googleLocationName String  @unique
+  placeId            String?
+  title              String?
+  verified           Boolean @default(false)
+  raw                Json?
+
+  store Store @relation(fields: [storeId], references: [id])
+}
+
+model Review {
+  id               String      @id @default(cuid())
+  storeId          String
+  googleReviewName String      @unique
+  rating           Int
+  authorName       String?
+  text             String?
+  postedAt         DateTime
+  updatedAt        DateTime?
+  sentiment        Sentiment?
+  topics           String[]
+  attributes       String[]
+  replyStatus      ReplyStatus @default(UNREPLIED)
+  riskLevel        RiskLevel   @default(NORMAL)
+  raw              Json?
+  createdAt        DateTime    @default(now())
+
+  store     Store         @relation(fields: [storeId], references: [id])
+  drafts    ReplyDraft[]
+  replies   ReviewReply[]
+  riskFlags RiskFlag[]
+}
+
+enum Sentiment {
+  POSITIVE
+  NEUTRAL
+  NEGATIVE
+}
+
+enum ReplyStatus {
+  UNREPLIED
+  DRAFTED
+  APPROVED
+  POSTED
+  SKIPPED
+}
+
+enum RiskLevel {
+  NORMAL
+  ATTENTION
+  URGENT
+  LEGAL
+  MEDICAL
+  PRIVACY
+  SAFETY
+}
+
+model ReplyDraft {
+  id                  String      @id @default(cuid())
+  reviewId            String
+  aiInitialText       String
+  ownerFinalText      String?
+  status              DraftStatus @default(DRAFT)
+  riskLevel           RiskLevel
+  requiresApproval    Boolean     @default(true)
+  generatedByActionId String?
+  approvedByUserId    String?
+  approvedAt          DateTime?
+  createdAt           DateTime    @default(now())
+  updatedAt           DateTime    @updatedAt
+
+  review    Review          @relation(fields: [reviewId], references: [id])
+  revisions ReplyRevision[]
+}
+
+enum DraftStatus {
+  DRAFT
+  EDITED
+  APPROVED
+  POSTING
+  POSTED
+  REJECTED
+}
+
+model ReplyRevision {
+  id              String   @id @default(cuid())
+  draftId         String
+  beforeText      String
+  afterText       String
+  diffSummary     Json
+  createdByUserId String
+  createdAt       DateTime @default(now())
+
+  draft ReplyDraft @relation(fields: [draftId], references: [id])
+}
+
+model ReviewReply {
+  id              String   @id @default(cuid())
+  reviewId        String
+  googleReplyName String?
+  text            String
+  postedByUserId  String?
+  postedAt        DateTime
+  raw             Json?
+
+  review Review @relation(fields: [reviewId], references: [id])
+}
+
+model RiskFlag {
+  id                String    @id @default(cuid())
+  reviewId          String
+  level             RiskLevel
+  reasons           String[]
+  autoReplyAllowed  Boolean
+  approvalRequired  Boolean
+  recommendedAction String
+  createdAt         DateTime  @default(now())
+
+  review Review @relation(fields: [reviewId], references: [id])
+}
+
+model Competitor {
+  id        String   @id @default(cuid())
+  storeId   String
+  name      String
+  placeId   String?
+  mapUrl    String?
+  notes     String?
+  createdAt DateTime @default(now())
+
+  store     Store                @relation(fields: [storeId], references: [id])
+  snapshots CompetitorSnapshot[]
+}
+
+model CompetitorSnapshot {
+  id                String   @id @default(cuid())
+  competitorId      String
+  rating            Float?
+  reviewCount       Int?
+  recentReviewCount Int?
+  photoCount        Int?
+  strengths         String[]
+  weaknesses        String[]
+  capturedAt        DateTime @default(now())
+
+  competitor Competitor @relation(fields: [competitorId], references: [id])
+}
+
+model Insight {
+  id             String   @id @default(cuid())
+  organizationId String
+  storeId        String?
+  type           String
+  periodStart    DateTime
+  periodEnd      DateTime
+  summary        String
+  data           Json
+  createdAt      DateTime @default(now())
+}
+
+model Task {
+  id                  String     @id @default(cuid())
+  storeId             String
+  title               String
+  detail              String?
+  type                TaskType
+  priority            Priority   @default(MEDIUM)
+  status              TaskStatus @default(TODO)
+  dueDate             DateTime?
+  assigneeUserId      String?
+  sourceAgentActionId String?
+  createdAt           DateTime   @default(now())
+  updatedAt           DateTime   @updatedAt
+
+  store Store @relation(fields: [storeId], references: [id])
+}
+
+enum TaskType {
+  REVIEW_REPLY
+  RISK_RESPONSE
+  PROFILE_UPDATE
+  PHOTO_ADD
+  REVIEW_REQUEST
+  SERVICE_IMPROVEMENT
+  COMPETITOR_ACTION
+}
+
+enum Priority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+}
+
+enum TaskStatus {
+  TODO
+  DOING
+  DONE
+  DISMISSED
+}
+
+model Report {
+  id             String     @id @default(cuid())
+  organizationId String
+  storeId        String?
+  type           ReportType
+  title          String
+  markdown       String
+  summary        String
+  periodStart    DateTime
+  periodEnd      DateTime
+  createdAt      DateTime   @default(now())
+}
+
+enum ReportType {
+  WEEKLY
+  MONTHLY
+  HQ
+  STORE_MANAGER
+}
+
+model Notification {
+  id             String             @id @default(cuid())
+  organizationId String
+  userId         String?
+  type           String
+  title          String
+  body           String
+  status         NotificationStatus @default(UNREAD)
+  actionUrl      String?
+  createdAt      DateTime           @default(now())
+}
+
+enum NotificationStatus {
+  UNREAD
+  READ
+  ARCHIVED
+}
+
+model AgentAction {
+  id               String            @id @default(cuid())
+  organizationId   String
+  userId           String?
+  agent            String
+  actionType       String
+  input            Json
+  output           Json?
+  status           AgentActionStatus
+  requiresApproval Boolean           @default(false)
+  errorMessage     String?
+  createdAt        DateTime          @default(now())
+}
+
+enum AgentActionStatus {
+  PENDING
+  RUNNING
+  COMPLETED
+  FAILED
+  CANCELLED
+}
+
+model AIStyleMemory {
+  id             String   @id @default(cuid())
+  organizationId String
+  storeId        String?
+  scope          String
+  key            String
+  value          Json
+  confidence     Float    @default(0.5)
+  expiresAt      DateTime?
+  updatedAt      DateTime @updatedAt
+
+  @@unique([organizationId, storeId, scope, key])
+}
+
+model IndustryTemplate {
+  id         String   @id @default(cuid())
+  industry   Industry
+  name       String
+  replyRules Json
+  ngWords    String[]
+  attributes String[]
+  createdAt  DateTime @default(now())
+
+  @@unique([industry, name])
+}
+
+model LLMUsageLog {
+  id               String   @id @default(cuid())
+  organizationId   String?
+  provider         String
+  model            String
+  purpose          String
+  inputTokens      Int
+  outputTokens     Int
+  estimatedCostJpy Float?
+  createdAt        DateTime @default(now())
+}
+
+model GoogleApiCallLog {
+  id             String   @id @default(cuid())
+  organizationId String?
+  endpoint       String
+  method         String
+  statusCode     Int?
+  errorCode      String?
+  retryCount     Int      @default(0)
+  createdAt      DateTime @default(now())
+}
+
+model AuditLog {
+  id             String   @id @default(cuid())
+  organizationId String
+  actorUserId    String?
+  action         String
+  targetType     String
+  targetId       String
+  before         Json?
+  after          Json?
+  ip             String?
+  userAgent      String?
+  createdAt      DateTime @default(now())
+}

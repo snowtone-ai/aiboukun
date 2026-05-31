@@ -45,6 +45,9 @@ tsconfig.tsbuildinfo
 # === Turbo ===
 .turbo/
 
+# === CodeGraph local daemon ===
+.codegraph/
+
 # === Vercel ===
 .vercel/
 

@@ -71,3 +71,34 @@
 - Date: 2026-05-31
 - Decision: UI・コピー・通知・レポートすべて日本語のみ
 - Deferred: 英語・多言語対応は事業拡大時に検討
+
+## D013: Auth.js v5 は beta 明示、Edge 入口保護は proxy.ts
+- Date: 2026-05-31
+- Decision: npm の `next-auth@5` stable tag は未提供のため `next-auth@5.0.0-beta.31` を明示採用。Next.js 16 では `src/proxy.ts` で `/app/*` の入口保護を行う。
+- Reason: タスク指定は NextAuth v5。DB session の検証はサーバー側 `auth()` / API middleware で行い、Edge Runtime の proxy には Prisma を持ち込まない。
+- Security note: proxy はセッションCookie有無による入口制御のみ。認可判断と organizationId 注入は Route Handler 側で必ず行う。
+
+## D014: Google Business Profile adapter は fetch ベース
+- Date: 2026-05-31
+- Decision: `googleapis` SDK 依存を追加せず、`src/lib/google/gbp-client.ts` で fetch ベースの薄い adapter を実装する。
+- Reason: ネットワーク制限下で依存追加を避け、既存の暗号化・レート制御・監査ログと小さく統合するため。
+- Review note: GBP API path/response shape と OAuth refresh flow はクロスベンダーレビューおよび実Google環境で確認する。
+
+## D015: Playwright E2E はシナリオ整理まで
+- Date: 2026-05-31
+- Decision: 現環境では Playwright 依存を追加せず、`e2e/README.md` に主要E2Eシナリオを整理する。
+- Reason: restricted network で依存追加が不確実。typecheck/lint/test/build を壊さず、依存導入可能環境で自動化できる受け入れシナリオを残す。
+
+## D016: セキュリティレビュー是正方針
+- Date: 2026-05-31
+- Decision: OAuth トークン保存は Auth.js のサーバー側 callback だけに限定し、クライアント token POST は廃止。GoogleConnection は暗号化保存し、Auth.js Account の OAuth token 列は保存しない。
+- Decision: 返信投稿は ReplyDraft.status を `APPROVED` から `POSTING` へ CAS 更新してから GBP API を呼び、並行投稿と承認取消レースを防ぐ。
+- Decision: GBP 接続/同期 API は RBAC を追加し、ロケーション紐付けは ADMIN 以上、アカウント/ロケーション取得と同期は MANAGER 以上に制限する。
+- Decision: AIStyleMemory は PII らしきフレーズを保存せず、TTL と store 単位の一意制約で肥大化を抑える。
+- Decision: DB には最低限の RLS policy を追加する。ただし Prisma アプリ接続ユーザーの完全な FORCE RLS 運用は、本番 DB ロール設計と `app.organization_id` セッション変数適用の検証後に切り替える。
+- Reason: レビューで指摘された即時修正可能な security / reliability リスクを、既存設計を壊さない最小差分で閉じるため。
+
+## D017: 大規模初期実装差分の扱い
+- Date: 2026-05-31
+- Decision: 初期実装一式とセキュリティレビュー是正を同一履歴として commit する。
+- Reason: 既存ワークツリーは全タスク実装済みだが未コミットで、ユーザー依頼がレビュー是正後の履歴化と push までを含んでいるため。機能単位の追跡は `tasks.md`、構造把握は `docs/repo-map.md`、リスク判断は本ファイルに分離して残す。

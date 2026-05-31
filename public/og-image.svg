@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-label="アイボウくん OGP">
+  <rect width="1200" height="630" fill="#FFFDF8"/>
+  <rect x="0" y="0" width="470" height="630" fill="#0F766E"/>
+  <circle cx="235" cy="230" r="110" fill="#FFFDF8"/>
+  <circle cx="195" cy="215" r="15" fill="#0F766E"/>
+  <circle cx="275" cy="215" r="15" fill="#0F766E"/>
+  <path d="M185 275c32 32 68 32 100 0" fill="none" stroke="#0F766E" stroke-width="18" stroke-linecap="round"/>
+  <text x="540" y="230" fill="#0F172A" font-family="sans-serif" font-size="76" font-weight="700">アイボウくん</text>
+  <text x="540" y="320" fill="#0F766E" font-family="sans-serif" font-size="44" font-weight="700">月1万円でAI相棒を雇う</text>
+  <text x="540" y="390" fill="#475569" font-family="sans-serif" font-size="30">Google口コミ管理・低評価検知・競合比較・レポート</text>
+</svg>
