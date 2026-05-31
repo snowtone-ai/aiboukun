@@ -1,0 +1,52 @@
+# === Secrets ===
+.env
+.env.*
+!.env.example
+
+# === Next.js build ===
+.next/
+out/
+dist/
+
+# === Dependencies ===
+node_modules/
+
+# === Prisma generated ===
+prisma/generated/
+
+# === Test coverage ===
+coverage/
+.nyc_output/
+
+# === Logs ===
+*.log
+npm-debug.log*
+pnpm-debug.log*
+
+# === OS ===
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# === Editor ===
+.vscode/
+!.vscode/extensions.json
+.idea/
+*.swp
+*.swo
+
+# === TypeScript cache ===
+*.tsbuildinfo
+tsconfig.tsbuildinfo
+
+# === pnpm ===
+.pnpm-store/
+
+# === Turbo ===
+.turbo/
+
+# === Vercel ===
+.vercel/
+
+# === Local override ===
+*.local
