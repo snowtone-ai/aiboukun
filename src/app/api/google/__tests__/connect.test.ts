@@ -14,6 +14,6 @@ describe("GET /api/google/connect", () => {
     const response = await GET(new NextRequest("http://localhost/api/google/connect"));
 
     expect(response.status).toBe(307);
-    expect(response.headers.get("location")).toContain("/api/auth/signin/google");
+    expect(response.headers.get("location")).toBe("http://localhost/signin?callbackUrl=%2Fapp%2Fsettings");
   });
 });

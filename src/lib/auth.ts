@@ -46,6 +46,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       clientId: googleClientId,
       clientSecret: googleClientSecret,
       authorization: {
+        url: "https://accounts.google.com/o/oauth2/v2/auth",
         params: {
           scope: googleScopes,
           access_type: "offline",
