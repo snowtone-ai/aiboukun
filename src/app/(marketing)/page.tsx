@@ -23,7 +23,7 @@ export default function MarketingPage() {
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
               <Button asChild size="lg">
-                <Link href="/api/auth/signin">無料診断を始める</Link>
+                <Link href="/signin?callbackUrl=%2Fapp">無料診断を始める</Link>
               </Button>
               <Button asChild size="lg" variant="secondary">
                 <Link href="/help">よくある質問</Link>

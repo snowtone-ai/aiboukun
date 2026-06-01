@@ -14,7 +14,7 @@ export function proxy(request: NextRequest) {
   }
 
   if (request.nextUrl.pathname.startsWith("/app") && !hasSessionCookie) {
-    const signInUrl = new URL("/api/auth/signin", request.nextUrl.origin);
+    const signInUrl = new URL("/signin", request.nextUrl.origin);
     signInUrl.searchParams.set("callbackUrl", `${request.nextUrl.pathname}${request.nextUrl.search}`);
     return NextResponse.redirect(signInUrl);
   }

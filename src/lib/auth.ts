@@ -26,6 +26,10 @@ const googleScopes = [
 const baseAdapter = PrismaAdapter(prisma as unknown as Parameters<typeof PrismaAdapter>[0]) as Adapter;
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
+  trustHost: true,
+  pages: {
+    signIn: "/signin",
+  },
   adapter: {
     ...baseAdapter,
     linkAccount(account) {

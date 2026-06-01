@@ -14,7 +14,7 @@ export function MarketingNav() {
           <Link href="/terms">利用規約</Link>
         </nav>
         <Button asChild size="sm">
-          <Link href="/api/auth/signin">ログイン</Link>
+          <Link href="/signin?callbackUrl=%2Fapp">ログイン</Link>
         </Button>
       </div>
     </header>

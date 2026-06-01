@@ -29,7 +29,7 @@ export function PricingBand() {
                 ))}
               </ul>
               <Button className="mt-6 w-full" asChild>
-                <Link href="/api/auth/signin">始める</Link>
+                <Link href="/signin?callbackUrl=%2Fapp">始める</Link>
               </Button>
             </div>
           ))}
