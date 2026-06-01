@@ -29,6 +29,7 @@ const googleClientSecret = process.env.GOOGLE_CLIENT_SECRET ?? process.env.AUTH_
 const baseAdapter = PrismaAdapter(prisma as unknown as Parameters<typeof PrismaAdapter>[0]) as Adapter;
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
+  secret: process.env.AUTH_SECRET ?? process.env.NEXTAUTH_SECRET,
   trustHost: true,
   pages: {
     signIn: "/signin",

@@ -1,11 +1,11 @@
 const requiredProductionEnv = [
   "DATABASE_URL",
-  "AUTH_SECRET",
   "TOKEN_ENCRYPTION_KEY",
   "GEMINI_API_KEY",
 ] as const;
 
 const requiredProductionEnvGroups = [
+  ["AUTH_SECRET", "NEXTAUTH_SECRET"],
   ["AUTH_URL", "NEXTAUTH_URL"],
   ["GOOGLE_CLIENT_ID", "AUTH_GOOGLE_ID"],
   ["GOOGLE_CLIENT_SECRET", "AUTH_GOOGLE_SECRET"],
