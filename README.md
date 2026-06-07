@@ -1,149 +1,65 @@
 # アイボウくん
 
-> **Googleマップ集客の営業・マーケティング担当AIエージェント**
+## 概要
 
-月1万円で雇えるAI相棒。管理ツールではなく、口コミ返信・低評価検知・競合比較・改善提案・週次/月次レポートまでを代わりにこなす「担当者型」SaaSです。
+Googleマップの口コミ管理・集客を支援するAIエージェント型SaaSです。口コミへの返信案生成・低評価の検知・競合比較・レポート自動作成など、営業・マーケティング担当者が行う業務をAIが代わりに処理します。個人店オーナーから多店舗チェーンの本部まで対応しており、月額1万円での利用を想定した製品です。
 
 ---
 
-## プロダクト概要
+## 主な機能
 
-| 項目 | 内容 |
-|---|---|
-| ターゲット | 個人店オーナー・店長・多店舗本部 |
-| コア機能 | Google口コミ管理、低評価検知、AI返信案生成、競合比較、週次/月次レポート |
-| AI | Gemini API（LLM Provider Adapter経由で切替可） |
-| 主要連携 | Google Business Profile API + OAuth |
-| 価格帯 | 月1万円（想定） |
-
-### 主なユーザーフロー
-
-1. **毎朝の確認（1分）** — アイボウくんの今日の報告 → 重要アラート → 未返信口コミに返信案を承認
-2. **口コミ返信** — 通知 → AI返信案確認 → 承認/修正 → Googleに自動投稿
-3. **チャット操作** — 「今月のレポート見せて」などテキスト/音声で主要操作が完結
-4. **多店舗本部確認** — 全店舗サマリー → 要注意店舗フォーカス → 月次レポート自動生成・エクスポート
+- Googleの口コミに対してAIが返信案を生成し、人が確認・承認してからGoogleに投稿できる
+- 低評価（星1〜3）や法的リスクのある口コミを自動検知してアラートを出せる
+- テキストまたは音声でチャット操作し、レポート表示・口コミ管理などの主要操作が完結できる
+- 企業・ブランド・エリア・店舗の階層で複数店舗をまとめて管理・比較できる
+- 週次・月次レポートを自動生成・エクスポートできる
 
 ---
 
 ## 技術スタック
 
-| レイヤー | 技術 |
-|---|---|
-| フレームワーク | Next.js 16 (App Router) + React 19 |
-| UI | Tailwind CSS v4 + shadcn/ui + Radix UI |
-| 認証 | Auth.js (NextAuth v5 beta) + Google OAuth |
-| DB | PostgreSQL + Prisma 7 |
-| AI | Gemini API (`@google/generative-ai`) |
-| バリデーション | Zod v4 |
-| フォーム | React Hook Form |
-| テスト | Vitest |
-| パッケージ管理 | pnpm |
+フロントエンド：Next.js 16（Reactベースのウェブアプリフレームワーク）、Tailwind CSS、shadcn/ui（UIコンポーネントライブラリ）
+バックエンド：Next.js API Routes（サーバーサイド処理）、Prisma 7（データベース操作ライブラリ）
+データベース：PostgreSQL（リレーショナルデータベース）
+インフラ・環境：Vercel（ホスティングプラットフォーム）
+AI・外部API：Gemini API（Google製AI）、Google Business Profile API（Googleマップ・口コミ連携）、Google OAuth（ログイン認証）
 
 ---
 
-## 主要機能
+## アーキテクチャの特徴
 
-- **AIエージェント群**: ReviewReplyAgent / RiskDetectionAgent / InsightAgent / ReportAgent / CompetitorAgent / TaskAgent / NavigationAgent / MemoryAgent / AgentOrchestrator
-- **Google Business Profile連携**: OAuth接続管理・口コミ同期・返信投稿（Human-in-the-loop必須）
-- **RBAC + 監査ログ**: 役割ベースアクセス制御、全操作の監査証跡
-- **テナント分離**: 組織IDによる厳密なデータ分離
-- **PWA対応**: スマホファーストのオフライン対応
-- **音声入力**: Web Speech API によるボイス操作
-- **多店舗ダッシュボード**: 企業 > ブランド > エリア > 店舗 の階層管理
+- 複数のAIエージェント（返信生成・リスク検知・競合分析・レポートなど）を役割ごとに分割し、オーケストレーター（指揮役）が連携を制御する設計
+- 星1〜3の低評価口コミや法的リスクがある返信は絶対に自動投稿しない安全設計（必ず人の承認が必要）
+- 組織IDによるテナント分離（データ分離）を全クエリで強制し、他社のデータが混入しない構造
 
 ---
 
-## セットアップ
+## 開発環境のセットアップ
 
-### 前提
-
-- Node.js 20+
-- pnpm
-- PostgreSQL
-
-### 手順
+必要なツール：Node.js 20以上、pnpm、PostgreSQL
 
 ```bash
-# 依存インストール
+# 依存パッケージのインストール
 pnpm install
 
-# 環境変数設定
+# 環境変数ファイルの作成
 cp .env.example .env.local
-# .env.local を編集（DATABASE_URL, NEXTAUTH_SECRET, Google OAuth, Gemini APIキーなど）
+# .env.local を編集（DATABASE_URL、NEXTAUTH_SECRET、Google OAuth、Gemini APIキーなど）
 
-# DBセットアップ
+# データベースのセットアップ
 npx prisma migrate dev
 npx prisma db seed
 
-# 開発サーバー起動
+# 開発サーバーの起動
 pnpm dev
 ```
 
-### 主要コマンド
+起動後は `http://localhost:3000` にアクセスしてください。
 
-```bash
-pnpm dev        # 開発サーバー (http://localhost:3000)
-pnpm build      # プロダクションビルド
-pnpm test       # ユニットテスト (Vitest)
-pnpm lint       # ESLint
-pnpm typecheck  # TypeScript型チェック
-```
-
----
-
-## 必要な環境変数
-
-`.env.example` を参照してください。主要な変数：
-
-| 変数 | 説明 |
+| コマンド | 内容 |
 |---|---|
-| `DATABASE_URL` | PostgreSQL接続URL |
-| `NEXTAUTH_SECRET` | Auth.js署名シークレット |
-| `NEXTAUTH_URL` | アプリのベースURL |
-| `GOOGLE_CLIENT_ID` | Google OAuth クライアントID |
-| `GOOGLE_CLIENT_SECRET` | Google OAuth クライアントシークレット |
-| `GEMINI_API_KEY` | Gemini API キー |
-| `TOKEN_ENCRYPTION_KEY` | OAuthトークン暗号化キー (32バイト hex) |
-
----
-
-## ディレクトリ構成
-
-```
-src/
-├── app/
-│   ├── (app)/app/          # 認証済み画面（口コミ・分析・設定など）
-│   ├── (marketing)/        # LP・FAQ・お問い合わせ・法的ページ
-│   └── api/                # Route Handlers
-├── components/
-│   ├── aibou/              # ホーム/AI司令室
-│   ├── chat/               # チャットUI
-│   ├── reviews/            # 口コミ管理
-│   ├── analytics/          # 分析ダッシュボード
-│   ├── reports/            # レポートビューア
-│   └── ui/                 # shadcn/ui コンポーネント
-├── lib/
-│   ├── agents/             # AIエージェント群
-│   ├── google/             # GBP APIアダプター
-│   ├── llm/                # LLM Provider Adapter
-│   └── auth.ts             # 認証設定
-└── types/domain.ts         # 共有ドメイン型
-prisma/
-└── schema.prisma           # DBスキーマ
-```
-
----
-
-## セキュリティ方針
-
-- **自動投稿禁止**: 星1〜3の低評価口コミ・法務/医療/プライバシーリスクあり返信は絶対に自動投稿しない
-- **Human-in-the-loop**: 重要な実行は必ず人の承認を挟む
-- **OAuthトークン暗号化**: DBへの保存前にAES暗号化必須
-- **テナント分離**: 全DBクエリで `organization_id` フィルタ必須
-- **RBAC**: MANAGERロール以上のみGoogle投稿操作が可能
-
----
-
-## ライセンス
-
-Private — 無断複製・転用禁止
+| `pnpm dev` | 開発サーバー起動 |
+| `pnpm build` | 本番ビルド |
+| `pnpm test` | ユニットテスト実行 |
+| `pnpm lint` | コード品質チェック |
+| `pnpm typecheck` | 型チェック |
