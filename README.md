@@ -18,11 +18,13 @@
 
 ## 技術スタック
 
-フロントエンド：Next.js 16（Reactベースのウェブアプリフレームワーク）、Tailwind CSS、shadcn/ui（UIコンポーネントライブラリ）
-バックエンド：Next.js API Routes（サーバーサイド処理）、Prisma 7（データベース操作ライブラリ）
-データベース：PostgreSQL（リレーショナルデータベース）
-インフラ・環境：Vercel（ホスティングプラットフォーム）
-AI・外部API：Gemini API（Google製AI）、Google Business Profile API（Googleマップ・口コミ連携）、Google OAuth（ログイン認証）
+| カテゴリ | 技術・ツール |
+|---|---|
+| フロントエンド | Next.js 16（Reactベースのウェブアプリフレームワーク）、Tailwind CSS、shadcn/ui（UIコンポーネントライブラリ） |
+| バックエンド | Next.js API Routes（サーバーサイド処理）、Prisma 7（データベース操作ライブラリ） |
+| データベース | PostgreSQL（リレーショナルデータベース） |
+| インフラ・環境 | Vercel（ホスティングプラットフォーム） |
+| AI・外部API | Gemini API（Google製AI）、Google Business Profile API（Googleマップ・口コミ連携）、Google OAuth（ログイン認証） |
 
 ---
 
