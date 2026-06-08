@@ -53,3 +53,13 @@ tsconfig.tsbuildinfo
 
 # === Local override ===
 *.local
+
+# GCP service account keys
+service-account*.json
+credentials.json
+.mcp.json
+.claude/settings.local.json
+.claude/worktrees/
+.claude/transcripts/
+.claude/cache/
+.codegraph/daemon.pid
