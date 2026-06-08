@@ -1,5 +1,11 @@
 # アイボウくん
 
+![Next.js](https://img.shields.io/badge/Next.js-16-black?logo=next.js)
+![TypeScript](https://img.shields.io/badge/TypeScript-5-blue?logo=typescript)
+![Prisma](https://img.shields.io/badge/Prisma-7-darkblue?logo=prisma)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-blue?logo=postgresql)
+![License](https://img.shields.io/badge/license-MIT-lightgrey)
+
 > Googleマップの口コミ対応を、月1万円のAI担当者が代わりにこなすSaaS
 
 個人店から多店舗チェーンまで、Googleマップの口コミ返信・低評価検知・競合比較・レポート作成をAIが担当します。スタッフが行っていた手間のかかる口コミ管理業務を自動化し、営業・マーケティング担当者の時間を解放します。
@@ -18,13 +24,13 @@
 
 ## 技術スタック
 
-| カテゴリ | 技術・ツール |
+| カテゴリ | 技術 |
 |---|---|
-| フロントエンド | Next.js 16（Reactベースのウェブアプリフレームワーク）、Tailwind CSS、shadcn/ui（UIコンポーネントライブラリ） |
-| バックエンド | Next.js API Routes（サーバーサイド処理）、Prisma 7（データベース操作ライブラリ） |
-| データベース | PostgreSQL（リレーショナルデータベース） |
-| インフラ・環境 | Vercel（ホスティングプラットフォーム） |
-| AI・外部API | Gemini API（Google製AI）、Google Business Profile API（Googleマップ・口コミ連携）、Google OAuth（ログイン認証） |
+| フロントエンド | Next.js 16, Tailwind CSS, shadcn/ui |
+| バックエンド | Next.js API Routes, Prisma 7 |
+| データベース | PostgreSQL |
+| インフラ | Vercel |
+| AI / 外部連携 | Gemini API, Google Business Profile API, Google OAuth |
 
 ---
 
